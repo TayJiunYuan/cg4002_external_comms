@@ -1,0 +1,5 @@
+# pyc
+*.pyc
+
+# DS Store
+.DS_Store

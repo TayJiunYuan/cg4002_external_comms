@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CG4002 Eval</title>
+    <style>
+    body {
+      background-image: url('images/76_bw.jpg');
+      }
+    .form-center {
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        height:50vh;
+        }
+    </style>
+
+</head>
+<body>
+<script>
+    function login() {
+        var group_name      = document.getElementById("group_name").value;
+        var num_player      = document.querySelector('input[name="num_player"]:checked').value;
+        var password        = document.getElementById("password").value;
+        var server_ip       = document.getElementById("ip_addr").value;
+        var no_visualizer   = document.getElementById("no_visualizer").checked;
+
+        if (typeof(Storage) !== "undefined") {
+            // store the data to persist for the session
+            sessionStorage.group_name       = group_name;
+            sessionStorage.num_player       = num_player;
+            sessionStorage.password         = password;
+            sessionStorage.server_ip        = server_ip;
+            sessionStorage.no_visualizer    = no_visualizer;
+
+            // load the game page
+            location.assign(num_player+"_player.html");
+        } else {
+            alert ("Sorry, your browser does not support web storage...");
+        }
+        return false; //prevent the default behavior of the submit event
+    }
+</script>
+<div class="form-center">
+    <form onsubmit="return login()">
+        <h2>CG4002 Eval Server</h2>
+        <label for="ip_addr">Eval Server IP Addr:</label><br>
+        <input id="ip_addr" placeholder="127.0.0.1"
+               type="text" minlength="7"
+                              required><br>
+
+               <!--
+               maxlength="15" size="15"
+               pattern="^((\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$"
+               required><br>
+               -->
+        <label for="group_name">Group name:</label><br>
+        <select id="group_name" name="group_name">
+            <option value="B01">B01</option>
+            <option value="B02">B02</option>
+            <option value="B03">B03</option>
+            <option value="B04">B04</option>
+            <option value="B05">B05</option>
+            <option value="B06">B06</option>
+            <option value="B07">B07</option>
+            <option value="B08">B08</option>
+            <option value="B09">B09</option>
+            <option value="B10">B10</option>
+            <option value="B11">B11</option>
+            <option value="B12">B12</option>
+            <option value="B13">B13</option>
+            <option value="B14">B14</option>
+            <option value="B15">B15</option>
+            <option value="B16">B16</option>
+            <option value="B17">B17</option>
+            <option value="B18">B18</option>
+            <option value="B19">B19</option>
+        </select><br>
+        <label for="password">Password (16 char):</label><br>
+        <input type="password" id="password" placeholder="Eval client password"
+               minlength="16" maxlength="16" required><br>
+
+        <input type="radio" id="1_player" name="num_player" value="1">
+        <label for="1_player">1 player mode</label><br>
+        <input type="radio" id="2_player" name="num_player" value="2" checked="checked">
+        <label for="1_player">2 player mode</label><br><br>
+        <br>
+        <input type="checkbox" id="no_visualizer" name="no_visualizer">
+        <label for="no_visualizer">The Team does not have a visualizer</label><br><br>
+        <input type="submit" value="LOGIN">
+    </form>
+</div>
+
+<!--Initially planned to display log messages-->
+<!--<div id="info";-->
+<!--     style="display:flex;-->
+<!--     align-items: center;-->
+<!--    justify-content: center;-->
+<!--    height:30vh;-->
+<!--    border:2px solid #ccc;-->
+<!--    font:16px/26px Georgia, Garamond, Serif;-->
+<!--    color: silver; background: black;-->
+<!--    background-color: rgba(0,0,0,.6);-->
+<!--    overflow:auto;-->
+<!--    margin-top: 5vh;-->
+<!--    margin-right: 10vw;-->
+<!--    margin-left: 10vw;">-->
+<!--    Log Messages-->
+<!--</div>-->
+</body>
+</html>

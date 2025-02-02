@@ -1,0 +1,70 @@
+body {
+  background-image: url('images/76_touched.jpg');
+  }
+.box{
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+    }
+.player{
+    display:flex;
+    align-items: flex-end;
+    justify-content: center;
+    text-align: center;
+    gap: 40vw;
+    }
+
+.one {
+    flex: 1;
+  }
+.action {
+    flex: 1;
+    background-color: #f1f1f1;
+    font-size: 150px;
+    border: 2px solid #abc;
+  }
+.button-10 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    border-radius: 6px;
+    border: none;
+    font-size:30px;
+    color: #fff;
+    background: linear-gradient(180deg, #4B91F7 0%, #367AF6 100%);
+    background-origin: border-box;
+    box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+.button-10:focus {
+    box-shadow: inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2), 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), 0px 0px 0px 3.5px rgba(58, 108, 217, 0.5);
+    outline: 0;
+}
+.num_move {
+    display: flex;
+    justify-content: center;
+}
+.info_box {
+    height:30vh;
+    border:2px solid #ccc;
+    font:16px/26px Georgia, Garamond, Serif;
+    color: silver;
+    background: black;
+    background-color: rgba(0,0,0,.6);
+    overflow:auto;
+    margin-top: 5vh;
+    margin-right:
+    10vw;
+    margin-left: 10vw;
+}
+
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
