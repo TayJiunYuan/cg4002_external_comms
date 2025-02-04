@@ -1,10 +1,10 @@
 """ 
 Run TCP Client (Sending) on Laptop with dummy data for testing.
-Command:  
+Command: 'python3 -m test.tcp_client_sender_server_receiver.test_tcp_client_sender' from project root.
 Run after starting TCP Server (Receiving) on Ultra96.
 """
 
-from tcp_client_sender.tcp_client_sender import TCPClientSender
+from src.core.tcp_client_sender.tcp_client_sender import TCPClientSender
 from datetime import datetime
 
 

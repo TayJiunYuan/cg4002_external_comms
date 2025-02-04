@@ -1,6 +1,6 @@
 import socket
 import json
-from models.sensor_packet import IMUPacket, ShootPacket
+from src.models.sensor_packet import IMUPacket, ShootPacket
 
 
 class TCPServerReceiver:

@@ -2,10 +2,6 @@ import paho.mqtt.client as mqtt
 import json
 from typing import Dict
 
-# MQTT Broker Configuration
-BROKER = "127.0.0.1"
-PORT = 1883
-
 # MQTT Topics
 VISIBILITY_RESPONSE_TOPIC = "/visibility/response"
 VISIBILITY_REQUEST_TOPIC = "/visibility/request"
@@ -15,15 +11,15 @@ ACTION_TOPIC = "/action"
 class MQTTClient:
     """A simple MQTT client for handling game-related messages."""
 
-    def __init__(self):
+    def __init__(self, broker, port):
         self.client = mqtt.Client()
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
-        self._connect()
+        self._connect(broker=broker, port=port)
 
-    def _connect(self):
+    def _connect(self, broker, port):
         """Connects to the MQTT broker and starts listening."""
-        self.client.connect(BROKER, PORT, 60)
+        self.client.connect(broker, port, 60)
         self.client.loop_start()
         self.client.subscribe(VISIBILITY_RESPONSE_TOPIC)
 

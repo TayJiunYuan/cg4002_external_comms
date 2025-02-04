@@ -1,10 +1,17 @@
-from EvaluationClient import EvaluationClient
+"""
+Run Eval Client on Ultra 96 for testing.
+Command: 'python3 -m test.eval_client.test_eval_client'.
+Run after starting Eval Server. 
+"""
+
+from src.core.eval_client.evaluation_client import EvaluationClient
 import json
 
 
 def main():
-    port = input("Enter Port: ")
-    client = EvaluationClient(host="127.0.0.1", port=int(port))
+    host = str(input("Host: "))
+    port = int(input("Port: "))
+    client = EvaluationClient(host=host, port=port)
     client.connect()
 
     while True:

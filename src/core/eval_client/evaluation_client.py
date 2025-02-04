@@ -1,5 +1,5 @@
 import socket
-from AESCipher import AESCipher
+from src.core.eval_client.aes_cipher import AESCipher
 
 
 class EvaluationClient:

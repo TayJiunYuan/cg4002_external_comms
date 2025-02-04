@@ -1,6 +1,6 @@
 import socket
 import json
-from models.sensor_packet import ShootPacket, IMUPacket
+from src.models.sensor_packet import IMUPacket, ShootPacket
 
 
 class TCPClientSender:
