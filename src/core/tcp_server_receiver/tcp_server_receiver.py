@@ -1,14 +1,16 @@
 import socket
 import json
 from src.models.sensor_packet import IMUPacket, ShootPacket
+from multiprocessing import Queue
 
 
 class TCPServerReceiver:
     """Class for TCP Server on Ultra 96 to receive sensor data from a TCP client on laptop"""
 
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int, queue: Queue):
         self.host = host
         self.port = port
+        self.queue = queue
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((self.host, self.port))
 
@@ -24,6 +26,7 @@ class TCPServerReceiver:
 
             while True:
                 message = self.receive_message(client_socket)
+                self.queue.put(message)
                 if not message:
                     print("Receiver Server - Client disconnected.")
                     break  # Exit loop when client disconnects

@@ -1,6 +1,6 @@
 """ 
 Run TCP Client (Sending) on Laptop with dummy data for testing.
-Command: 'python3 -m test.tcp_client_sender_server_receiver.test_tcp_client_sender' from project root.
+Command: 'python3 -m test.tcp_relay_clients.test_tcp_client_sender' from project root.
 Run after starting TCP Server (Receiving) on Ultra96.
 """
 
