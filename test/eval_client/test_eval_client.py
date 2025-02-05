@@ -5,7 +5,6 @@ Run after starting Eval Server.
 """
 
 from src.core.eval_client.evaluation_client import EvaluationClient
-import json
 
 
 def main():
@@ -39,8 +38,8 @@ def main():
                     },
                 },
             }
-            client.send_message(json.dumps(dummy_packet))
-            client.receive_message()
+            client.send_game_state_prediction(dummy_packet)
+            client.receive_correct_game_state()
 
 
 main()
