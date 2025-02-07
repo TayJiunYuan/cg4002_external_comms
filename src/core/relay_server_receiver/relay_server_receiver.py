@@ -50,13 +50,13 @@ class RelayServerReceiver:
             client_socket.close()
         except (socket.error, KeyboardInterrupt) as e:
             print_colored(
-                f"RELAY SERVER (RECEIVER) P{self.player_id} - Server error: {e}",
+                f"Relay Server (Receiver) P{self.player_id} - Server error: {e}",
                 COLORS["green"],
             )
         finally:
             self.socket.close()
             print_colored(
-                f"RELAY SERVER (RECEIVER) P{self.player_id} - Server shut down.",
+                f"Relay Server (Receiver) P{self.player_id} - Server shut down.",
                 COLORS["green"],
             )
 

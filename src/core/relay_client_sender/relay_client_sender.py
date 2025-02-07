@@ -32,12 +32,12 @@ class RelayClientSender:
         message_length = f"{len(encoded_json)}_".encode("utf-8")
         try:
             self.socket.sendall(message_length + encoded_json)
-            print(
+            print_colored(
                 f"Relay Client (Sender) P{self.player_id} - Sent: {packet}",
                 COLORS["green"],
             )
         except socket.error as e:
-            print(
+            print_colored(
                 f"Relay Client (Sender) P{self.player_id} - End error: {e}",
                 COLORS["green"],
             )

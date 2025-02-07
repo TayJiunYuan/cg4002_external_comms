@@ -21,7 +21,7 @@ class RelayServerSender:
         """Start the server and wait for a single client connection"""
         self.socket.listen(1)
         print_colored(
-            f"Relay Server (Server) P{self.player_id} - Listening on {self.host}:{self.port}",
+            f"Relay Server (Sender) P{self.player_id} - Listening on {self.host}:{self.port}",
             COLORS["yellow"],
         )
 
@@ -30,7 +30,7 @@ class RelayServerSender:
             client_socket, client_address = self.socket.accept()
             self.client_socket = client_socket
             print_colored(
-                f"Relay Server (Server) P{self.player_id} - Connection established with {client_address}",
+                f"Relay Server (Sender) P{self.player_id} - Connection established with {client_address}",
                 COLORS["yellow"],
             )
             while True:
@@ -39,13 +39,13 @@ class RelayServerSender:
 
         except (socket.error, KeyboardInterrupt) as e:
             print_colored(
-                f"Relay Server (Server) P{self.player_id} - Server error: {e}",
+                f"Relay Server (Sender) P{self.player_id} - Server error: {e}",
                 COLORS["yellow"],
             )
         finally:
             self.socket.close()
             print_colored(
-                f"Relay Server (Server) P{self.player_id} - Server shut down.",
+                f"Relay Server (Sender) P{self.player_id} - Server shut down.",
                 COLORS["yellow"],
             )
 
@@ -56,11 +56,11 @@ class RelayServerSender:
             if self.client_socket:
                 self.client_socket.sendall(message_length + encoded_json)
                 print_colored(
-                    f"Relay Server (Server) P{self.player_id} - Sent: {hp_and_bullets}",
+                    f"Relay Server (Sender) P{self.player_id} - Sent: {hp_and_bullets}",
                     COLORS["yellow"],
                 )
         except socket.error as e:
             print_colored(
-                f"Relay Server (Server) P{self.player_id} - End error: {e}",
+                f"Relay Server (Sender) P{self.player_id} - End error: {e}",
                 COLORS["yellow"],
             )

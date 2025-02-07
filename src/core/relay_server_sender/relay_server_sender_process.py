@@ -2,7 +2,7 @@ from multiprocessing import Queue
 from src.core.relay_server_sender.relay_server_sender import RelayServerSender
 
 
-def tcp_server_sender_process(
+def relay_server_sender_process(
     host: str, port: int, player_id: int, to_relay_queue: Queue
 ):
     server = RelayServerSender(
