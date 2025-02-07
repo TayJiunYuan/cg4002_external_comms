@@ -2,6 +2,7 @@ import socket
 import json
 from src.core.eval_client.aes_cipher import AESCipher
 from src.models.game_state import GameState, GameStatePrediction
+from src.utils.print_color import print_colored, COLORS
 
 
 class EvaluationClient:
@@ -15,26 +16,28 @@ class EvaluationClient:
         """Connects to the evaluation server and sends a hello message."""
         try:
             self.socket.connect((self.host, self.port))
-            print(f"Eval Client - Connected to {self.host}:{self.port}")
-            self.send_message("hello")
+            print_colored(
+                f"Eval Client - Connected to {self.host}:{self.port}", COLORS["cyan"]
+            )
+            self._send_message("hello")
         except (socket.error, ConnectionRefusedError) as e:
-            print(f"Connection error: {e}")
+            print_colored(f"Connection error: {e}", COLORS["cyan"])
 
-    def send_message(self, message: str):
+    def _send_message(self, message: str):
         """Encrypts and sends a message."""
         encrypted_message = self.cipher.encrypt(message)
         message_length = f"{len(encrypted_message)}_".encode("utf-8")
         try:
             self.socket.sendall(message_length + encrypted_message)
-            print(f"Eval Client - Sent: {message}")
+            print_colored(f"Eval Client - Sent: {message}", COLORS["cyan"])
         except socket.error as e:
-            print(f"Eval Client - Send error: {e}")
+            print_colored(f"Eval Client - Send error: {e}", COLORS["cyan"])
 
     def send_game_state_prediction(self, game_state_prediction: GameStatePrediction):
         """Encrypts and sends game state prediction."""
-        self.send_message(json.dumps(game_state_prediction))
+        self._send_message(json.dumps(game_state_prediction))
 
-    def receive_message(self):
+    def _receive_message(self):
         """Receives and decrypts a message from the evaluation server."""
         try:
             # Read message length
@@ -42,9 +45,7 @@ class EvaluationClient:
             while not length_data.endswith(b"_"):
                 chunk = self.socket.recv(1)
                 if not chunk:
-                    raise ConnectionError(
-                        "Eval Client - Connection lost while receiving length."
-                    )
+                    raise ConnectionError("Connection lost while receiving length.")
                 length_data += chunk
 
             length = int(length_data[:-1].decode("utf-8"))
@@ -53,18 +54,19 @@ class EvaluationClient:
             while len(data) < length:
                 chunk = self.socket.recv(length - len(data))
                 if not chunk:
-                    raise ConnectionError(
-                        "Eval Client - Connection lost while receiving message."
-                    )
+                    raise ConnectionError("Connection lost while receiving message.")
                 data += chunk
             return data.decode("utf-8")
 
         except (ValueError, socket.error, ConnectionError) as e:
-            print(f"Eval Client - Receive error: {e}")
+            print_colored(f"Eval Client - Receive error: {e}", COLORS["cyan"])
             return None
 
     def receive_correct_game_state(self) -> GameState:
         """Receives and decrypts a correct game state from the evaluation server."""
-        correct_game_state = json.loads(self.receive_message())
-        print("Eval Client - Received gamestate from eval server: ", correct_game_state)
+        correct_game_state = json.loads(self._receive_message())
+        print_colored(
+            f"Eval Client - Received gamestate from eval server: {correct_game_state}",
+            COLORS["cyan"],
+        )
         return correct_game_state
