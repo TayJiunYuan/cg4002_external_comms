@@ -4,7 +4,6 @@ Command: 'python3 -m test.relay_clients.test_relay_clients' from project root.
 Run after starting Relay Servers on Ultra96.
 """
 
-import sys
 from src.core.relay_client_sender.relay_client_sender_process import (
     relay_client_sender_process,
 )

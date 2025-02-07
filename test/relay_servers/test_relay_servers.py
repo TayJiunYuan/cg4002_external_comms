@@ -3,7 +3,6 @@ Run Relay Server (Sending) and Relay Server (Receiving) for testing on Ultra 96.
 Command: 'python3 -m test.relay_servers.test_relay_servers' from project root.
 """
 
-import sys
 import multiprocessing
 from src.core.relay_server_receiver.relay_server_receiver_process import (
     relay_server_receiver_process,
