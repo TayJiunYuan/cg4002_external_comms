@@ -4,7 +4,7 @@ Command: 'python3 -m test.tcp_relay_clients.test_tcp_client_receiver' from proje
 Run after starting TCP Server (Sending) on Ultra96.
 """
 
-from src.core.tcp_client_receiver.tcp_client_receiver import TCPClientReceiver
+from src.core.relay_client_receiver.relay_client_receiver import TCPClientReceiver
 
 
 host = str(input("Host: "))

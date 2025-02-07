@@ -7,7 +7,7 @@ import multiprocessing
 from src.core.tcp_server_sender.tcp_server_sender_process import (
     tcp_server_sender_process,
 )
-from src.core.tcp_server_receiver.tcp_server_receiver_process import (
+from src.core.relay_server_receiver.relay_server_receiver_process import (
     tcp_server_receiver_process,
 )
 
