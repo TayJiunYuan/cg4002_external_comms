@@ -75,7 +75,7 @@ if __name__ == "__main__":
     while True:
         print()
         user_input = input(
-            'Enter "i" to send dummy IMU data or "s" to send dummy shoot data: \n'
+            'TEST - Enter "i" to send dummy IMU data or "s" to send dummy shoot data: \n'
         )
         if user_input == "i":
             to_u96_queue.put(dummy_imu_packet)

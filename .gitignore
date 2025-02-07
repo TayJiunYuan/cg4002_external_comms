@@ -3,3 +3,6 @@
 
 # DS Store
 .DS_Store
+
+# log files
+src/core/eval_server/server/evaluation_logs/*
