@@ -14,12 +14,10 @@ from src.core.relay_server_sender.relay_server_sender_process import (
 
 if __name__ == "__main__":
 
-    relay_server_receiver_host_p1 = str(
-        input("TEST - IP Address for Server Receiver: ")
-    )
+    relay_server_receiver_host_p1 = str(input("TEST - Host for Server Receiver: "))
     relay_server_receiver_port_p1 = int(input("TEST - Port for Server Receiver: "))
 
-    relay_server_sender_host_p1 = str(input("TEST - IP Address for Server Receiver: "))
+    relay_server_sender_host_p1 = str(input("TEST - Host for Server Receiver: "))
     relay_server_sender_port_p1 = int(input("TEST - Port for Server Receiver: "))
 
     from_relay_queue = Queue()
