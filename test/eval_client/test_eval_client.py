@@ -4,8 +4,8 @@ Command: 'python3 -m test.eval_client.test_eval_client'.
 Run after starting Eval Server. 
 """
 
-from src.core.eval_client.evaluation_client_process import evaluation_client_process
 from multiprocessing import Queue, Process
+from src.core.eval_client.evaluation_client_process import evaluation_client_process
 
 
 if __name__ == "__main__":
