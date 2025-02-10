@@ -7,7 +7,7 @@ from src.core.relay_server_sender.relay_server_sender_process import (
 from src.core.ai_service.dummy_ai_service_process import dummy_ai_service_process
 from src.core.eval_client.evaluation_client_process import evaluation_client_process
 from src.core.mqtt_client.mqtt_client_process import mqtt_client_process
-from src.core.game_engine.one_player_game_engine import one_player_game_engine_process
+from src.core.game_engine.one_player_game_engine_process import one_player_game_engine_process
 from multiprocessing import Queue, Process
 
 if __name__ == "__main__":
