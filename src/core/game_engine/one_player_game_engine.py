@@ -13,22 +13,16 @@ from src.utils.print_color import print_colored, COLORS
 class OnePlayerGameEngine:
     def __init__(
         self,
-        from_relay_queue_p1: Queue,
         to_relay_queue_p1: Queue,
-        from_relay_queue_p2: Queue,
         to_relay_queue_p2: Queue,
-        from_ai_queue: Queue,
         to_ai_queue: Queue,
         from_eval_queue: Queue,
         to_eval_queue: Queue,
         from_visualizer_queue: Queue,
         to_visualizer_queue: Queue,
     ):
-        self.from_relay_queue_p1 = from_relay_queue_p1
         self.to_relay_queue_p1 = to_relay_queue_p1
-        self.from_relay_queue_p2 = from_relay_queue_p2
         self.to_relay_queue_p2 = to_relay_queue_p2
-        self.from_ai_queue = from_ai_queue
         self.to_ai_queue = to_ai_queue
         self.from_eval_queue = from_eval_queue
         self.to_eval_queue = to_eval_queue

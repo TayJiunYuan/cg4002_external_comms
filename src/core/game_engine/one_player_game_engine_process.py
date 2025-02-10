@@ -19,11 +19,8 @@ def one_player_game_engine_process(
     to_visualizer_queue: Queue,
 ):
     game_engine = OnePlayerGameEngine(
-        from_relay_queue_p1,
         to_relay_queue_p1,
-        from_relay_queue_p2,
         to_relay_queue_p2,
-        from_ai_queue,
         to_ai_queue,
         from_eval_queue,
         to_eval_queue,
