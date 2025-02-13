@@ -2,10 +2,10 @@ import uuid
 from multiprocessing import Queue
 from src.core.game_engine.game_state_engine import GameStateEngine
 from src.models.game_state import GameState, GameStatePrediction, HPAndBulletsState
-from src.models.sensor_packet import IMUPacket, ShootPacket
 from src.models.visualizer_packet import (
     VisibilityRequestPacket,
     VisibilityResponsePacket,
+    VisualizerActionPacket,
 )
 from src.utils.print_color import print_colored, COLORS
 
@@ -79,7 +79,11 @@ class OnePlayerGameEngine:
         )
         return correct_game_state
 
-    def update_game_state(self, correct_game_state: GameState) -> None:
+    def get_game_state(self) -> GameState:
+        game_state = self.game_state_engine.get_dict()
+        return game_state
+
+    def update_game_state(self, correct_game_state: GameState) -> GameState:
         self.game_state_engine.player_1.set_state(
             hp=correct_game_state["p1"]["hp"],
             bullets_remaining=correct_game_state["p1"]["bullets"],
@@ -97,15 +101,29 @@ class OnePlayerGameEngine:
             num_deaths=correct_game_state["p2"]["deaths"],
             num_unused_shield=correct_game_state["p2"]["shields"],
         )
+        game_state = self.get_game_state()
+        return game_state
 
     def send_updates_to_visualizer(
-        self, action: str, player_id: int, correct_game_state: GameState
+        self, action, player_id, can_see, old_game_state, new_game_state
     ) -> None:
-        visualizer_action_packet = {
+        action_successful = False
+        opponent_hp_hit = 0
+        if action in ["shield, reload, logout"]:  # non-damaging action
+            action_successful = True
+            opponent_hp_hit = 0
+        else:  # damaging action (gun, bomb, badminton, golf, fencing, boxing)
+            action_successful = can_see
+            opponent_id = 2 if player_id == 1 else 1
+            opponent_hp_hit = (
+                old_game_state[opponent_id]["hp"] - new_game_state[opponent_id]["hp"]
+            )
+        visualizer_action_packet: VisualizerActionPacket = {
             "action": action,
+            "action_successful": action_successful,
             "player_id": player_id,
-            "game_state": correct_game_state,
-        }  # TODO: Implement hp calculation to Send ActionPacket class instead (cfm action packet with Visualizer)
+            "opponent_hp_hit": opponent_hp_hit,
+        }
         self.to_visualizer_queue.put(visualizer_action_packet)
         print_colored(
             f"GAME ENGINE - Sent correct game state to Visualizer: {visualizer_action_packet}",

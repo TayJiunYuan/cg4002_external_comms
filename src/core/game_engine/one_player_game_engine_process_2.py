@@ -60,14 +60,21 @@ def one_player_game_engine_process(
                 predicted_game_state=predicted_game_state
             )
 
+            # Get old Game State
+            old_game_state = game_engine.get_game_state()
+
             # Update Game State
-            game_engine.update_game_state(correct_game_state=correct_game_state)
+            new_game_state = game_engine.update_game_state(
+                correct_game_state=correct_game_state
+            )
 
             # Send new game state to visualizer
             game_engine.send_updates_to_visualizer(
                 action="gun",
                 player_id=player_id,
-                correct_game_state=correct_game_state,
+                can_see=can_see,
+                old_game_state=old_game_state,
+                new_game_state=new_game_state,
             )
 
             # Send hp and bullets to relays
@@ -95,14 +102,21 @@ def one_player_game_engine_process(
                 predicted_game_state=predicted_game_state
             )
 
+            # Get old Game State
+            old_game_state = game_engine.get_game_state()
+
             # Update Game State
-            game_engine.update_game_state(correct_game_state=correct_game_state)
+            new_game_state = game_engine.update_game_state(
+                correct_game_state=correct_game_state
+            )
 
             # Send new game state to visualizer
             game_engine.send_updates_to_visualizer(
                 action=action,
                 player_id=player_id,
-                correct_game_state=correct_game_state,
+                can_see=can_see,
+                old_game_state=old_game_state,
+                new_game_state=new_game_state,
             )
 
             # Send hp and bullets to relays
