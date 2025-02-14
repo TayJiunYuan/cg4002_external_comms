@@ -116,7 +116,8 @@ class OnePlayerGameEngine:
             action_successful = can_see
             opponent_id = 2 if player_id == 1 else 1
             opponent_hp_hit = (
-                old_game_state[opponent_id]["hp"] - new_game_state[opponent_id]["hp"]
+                old_game_state[f"p{opponent_id}"]["hp"]
+                - new_game_state[f"p{opponent_id}"]["hp"]
             )
         visualizer_action_packet: VisualizerActionPacket = {
             "action": action,

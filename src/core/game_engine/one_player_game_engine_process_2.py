@@ -47,6 +47,9 @@ def one_player_game_engine_process(
             )
             player_id = packet["player_id"]
 
+            # Get old Game State
+            old_game_state = game_engine.get_game_state()
+
             # Check Visibility
             can_see = game_engine.check_visibility(player_id=player_id)
 
@@ -59,9 +62,6 @@ def one_player_game_engine_process(
             correct_game_state = game_engine.verify_game_state_with_eval(
                 predicted_game_state=predicted_game_state
             )
-
-            # Get old Game State
-            old_game_state = game_engine.get_game_state()
 
             # Update Game State
             new_game_state = game_engine.update_game_state(
@@ -89,6 +89,9 @@ def one_player_game_engine_process(
             action = packet["action"]
             player_id = packet["player_id"]
 
+            # Get old Game State
+            old_game_state = game_engine.get_game_state()
+
             # Check Visibility
             can_see = game_engine.check_visibility(player_id=player_id)
 
@@ -101,9 +104,6 @@ def one_player_game_engine_process(
             correct_game_state = game_engine.verify_game_state_with_eval(
                 predicted_game_state=predicted_game_state
             )
-
-            # Get old Game State
-            old_game_state = game_engine.get_game_state()
 
             # Update Game State
             new_game_state = game_engine.update_game_state(

@@ -3,7 +3,7 @@ import json
 from typing import Dict
 from multiprocessing import Queue
 from src.models.visualizer_packet import (
-    ActionPacket,
+    VisualizerActionPacket,
     VisibilityRequestPacket,
     VisibilityResponsePacket,
 )
@@ -63,7 +63,7 @@ class MQTTClient:
                 f"MQTT Client - Error publishing to {topic}: {e}", COLORS["magenta"]
             )
 
-    def send_action(self, action_packet: ActionPacket):
+    def send_action(self, action_packet: VisualizerActionPacket):
         """Publishes a player's action to the visualizer."""
         self._publish(ACTION_TOPIC, action_packet)
 
