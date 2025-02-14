@@ -1,8 +1,8 @@
-class ActionPacket:
+class VisualizerActionPacket:
     action: str
+    action_successful: bool
     player_id: int
     opponent_hp_hit: int
-    opponent_died: bool
 
 
 class VisibilityRequestPacket:
