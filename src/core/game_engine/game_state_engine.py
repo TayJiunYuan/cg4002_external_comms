@@ -63,10 +63,6 @@ class Player:
         self.hp_shield = 0
         self.num_shield = self.max_shields
 
-        self.rain_list = (
-            []
-        )  # list of quadrants where rain/snow has been started by the bomb of this player
-
     def __str__(self):
         return str(self.get_dict())
 
@@ -161,10 +157,6 @@ class Player:
             break
 
     def rain_damage(self, opponent, can_see, snow_bomb_count):
-        """
-        whenever an opponent walks into a quadrant we need to reduce the health
-        based on the number of rains/snow
-        """
         if can_see:
             for _ in range(snow_bomb_count):
                 print("hi im here)")

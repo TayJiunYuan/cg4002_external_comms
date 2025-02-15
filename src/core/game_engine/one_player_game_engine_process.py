@@ -1,7 +1,8 @@
 from multiprocessing import Queue
 
 from src.core.game_engine.one_player_game_engine import OnePlayerGameEngine
-from src.utils.print_color import print_colored, COLORS
+from src.models.sensor_packet import IMUPacket, ShootPacket
+from src.models.ai_packet import AIPacket
 
 
 def one_player_game_engine_process(
@@ -25,26 +26,16 @@ def one_player_game_engine_process(
     )
     while True:
         # Either IMU Packet, Shoot Packet or AI action
-        packet = to_game_engine_queue.get()
+        packet: IMUPacket | ShootPacket | AIPacket = to_game_engine_queue.get()
 
         # IMU Packet
         if packet["type"] == "imu":
-            print_colored(
-                f"GAME ENGINE - Received IMU packet from P1: {packet}",
-                COLORS["white"],
-            )
-            to_ai_queue.put(packet)
-            print_colored(
-                f"GAME ENGINE - Sent IMU packet to AI: {packet}", COLORS["white"]
-            )
+            game_engine.on_imu_packet_received(packet=packet)
+            game_engine.send_imu_packet_to_ai(packet=packet)
 
         # Shoot Packet
         elif packet["type"] == "shoot":
-            print_colored(
-                f"GAME ENGINE - Received shoot packet from P1: {packet}",
-                COLORS["white"],
-            )
-            player_id = packet["player_id"]
+            player_id = game_engine.on_shoot_packet_received(packet=packet)
 
             # Get old Game State
             old_game_state = game_engine.get_game_state()
@@ -84,12 +75,7 @@ def one_player_game_engine_process(
 
         # AI packet
         else:
-            print_colored(
-                f"GAME ENGINE - Received AI action: {packet}",
-                COLORS["white"],
-            )
-            action = packet["action"]
-            player_id = packet["player_id"]
+            player_id, action = game_engine.on_ai_packet_received(packet=packet)
 
             # Get old Game State
             old_game_state = game_engine.get_game_state()

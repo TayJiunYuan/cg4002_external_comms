@@ -2,6 +2,8 @@ import uuid
 from typing import Tuple
 from multiprocessing import Queue
 from src.core.game_engine.game_state_engine import GameStateEngine
+from src.models.sensor_packet import IMUPacket, ShootPacket
+from src.models.ai_packet import AIPacket
 from src.models.game_state import GameState, GameStatePrediction, HPAndBulletsState
 from src.models.visualizer_packet import (
     VisibilityRequestPacket,
@@ -30,6 +32,33 @@ class OnePlayerGameEngine:
         self.from_visualizer_queue = from_visualizer_queue
         self.to_visualizer_queue = to_visualizer_queue
         self.game_state_engine = GameStateEngine()
+
+    def on_shoot_packet_received(self, packet: ShootPacket) -> int:
+        print_colored(
+            f"GAME ENGINE - Received shoot packet from P1: {packet}",
+            COLORS["white"],
+        )
+        player_id = packet["player_id"]
+        return player_id
+
+    def on_imu_packet_received(self, packet: IMUPacket) -> None:
+        print_colored(
+            f"GAME ENGINE - Received IMU packet from P1: {packet}",
+            COLORS["white"],
+        )
+
+    def on_ai_packet_received(self, packet: AIPacket) -> Tuple[int, str]:
+        print_colored(
+            f"GAME ENGINE - Received AI action: {packet}",
+            COLORS["white"],
+        )
+        player_id = packet["player_id"]
+        action = packet["action"]
+        return (player_id, action)
+
+    def send_imu_packet_to_ai(self, packet: IMUPacket) -> None:
+        self.to_ai_queue.put(packet)
+        print_colored(f"GAME ENGINE - Sent IMU packet to AI: {packet}", COLORS["white"])
 
     def check_visibility(self, player_id: int) -> Tuple[bool, bool]:
         visibility_request: VisibilityRequestPacket = {
