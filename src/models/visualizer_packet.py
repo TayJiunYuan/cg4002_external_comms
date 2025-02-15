@@ -14,3 +14,4 @@ class VisibilityResponsePacket:
     request_id: str
     player_id: int
     is_opponent_visible: bool
+    snow_bomb_count: int

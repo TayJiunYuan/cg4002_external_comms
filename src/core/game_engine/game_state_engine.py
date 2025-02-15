@@ -10,17 +10,18 @@ class GameStateEngine:
         data = {"p1": self.player_1.get_dict(), "p2": self.player_2.get_dict()}
         return data
 
-    def perform_action(self, action, player_id, can_see):
+    def perform_action(self, action, player_id, can_see, snow_bomb_count):
         """use the user sent action to alter the game state"""
 
         if player_id == 1:
             attacker = self.player_1
             opponent = self.player_2
-            # opponent_position = position_2
+
         else:
             attacker = self.player_2
             opponent = self.player_1
-            # opponent_position = position_1
+
+        attacker.rain_damage(opponent, can_see, snow_bomb_count)
 
         # perform the actual action
         if action == "gun":
@@ -29,8 +30,8 @@ class GameStateEngine:
             attacker.shield()
         elif action == "reload":
             attacker.reload()
-        # elif action == "bomb":
-        #     attacker.bomb(opponent, opponent_position, can_see)
+        elif action == "bomb":
+            attacker.bomb(opponent, can_see)
         elif action in {"badminton", "golf", "fencing", "boxing"}:
             # all these have the same behaviour
             attacker.harm_AI(opponent, can_see)
@@ -78,18 +79,6 @@ class Player:
         data["deaths"] = self.num_deaths
         data["shields"] = self.num_shield
         return data
-
-    # def get_difference(self, recv_dict):
-    #     """get difference between the received player sate and our state"""
-    #     data = self.get_dict()
-    #     for key in list(data.keys()):
-    #         val = data[key] - recv_dict[key]
-    #         if val == 0:
-    #             # there is no difference so we delete the element
-    #             data.pop(key)
-    #         else:
-    #             data[key] = val
-    #     return data
 
     def set_state(
         self,
@@ -155,43 +144,31 @@ class Player:
             self.hp_shield = self.max_shield_health
             self.num_shield -= 1
 
-    # def bomb(self, opponent, opponent_position, can_see):
-    #     """Throw a bomb at opponent"""
-    #     while True:
-    #         # check the ammo
-    #         if self.num_bombs <= 0:
-    #             break
-    #         self.num_bombs -= 1
+    def bomb(self, opponent, can_see):
+        """Throw a bomb at opponent"""
+        while True:
+            # check the ammo
+            if self.num_bombs <= 0:
+                break
+            self.num_bombs -= 1
 
-    #         # check if the opponent is visible
-    #         if not can_see:
-    #             # this bomb will not start a rain/snow and hence has no effect with respect to gameplay
-    #             break
+            # check if the opponent is visible
+            if not can_see:
+                # this bomb will not start a rain/snow and hence has no effect with respect to gameplay
+                break
 
-    #         opponent.reduce_health(self.hp_bomb)
-    #         # start a rain/snow in the quadrant of the opponent
-    #         self.rain_list.append(opponent_position)
-    #         break
+            opponent.reduce_health(self.hp_bomb)
+            break
 
-    # def rain_damage(self, opponent, opponent_position, can_see, attacker_id):
-    #     """
-    #     whenever an opponent walks into a quadrant we need to reduce the health
-    #     based on the number of rains/snow
-    #     """
-    #     if can_see:
-    #         if opponent_position == 0:
-    #             # this means the opponent is returning to the default position after a disconnect
-    #             # so we have to update the position value
-    #             if attacker_id == 1:
-    #                 # the opponent is player 2, who will always return to quadrant 3
-    #                 opponent_position = 3
-    #             else:
-    #                 # the opponent is player 1, who will always return to quadrant 1
-    #                 opponent_position = 1
-
-    #         for p in self.rain_list:
-    #             if p == opponent_position:
-    #                 opponent.reduce_health(self.hp_rain)
+    def rain_damage(self, opponent, can_see, snow_bomb_count):
+        """
+        whenever an opponent walks into a quadrant we need to reduce the health
+        based on the number of rains/snow
+        """
+        if can_see:
+            for _ in range(snow_bomb_count):
+                print("hi im here)")
+                opponent.reduce_health(self.hp_rain)
 
     def harm_AI(self, opponent, can_see):
         """We can harm am opponent based on our AI action if we can see them"""

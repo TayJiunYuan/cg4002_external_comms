@@ -1,4 +1,5 @@
 import uuid
+from typing import Tuple
 from multiprocessing import Queue
 from src.core.game_engine.game_state_engine import GameStateEngine
 from src.models.game_state import GameState, GameStatePrediction, HPAndBulletsState
@@ -30,7 +31,7 @@ class OnePlayerGameEngine:
         self.to_visualizer_queue = to_visualizer_queue
         self.game_state_engine = GameStateEngine()
 
-    def check_visibility(self, player_id: int) -> bool:
+    def check_visibility(self, player_id: int) -> Tuple[bool, bool]:
         visibility_request: VisibilityRequestPacket = {
             "request_id": str(uuid.uuid4()),
             "player_id": player_id,
@@ -41,20 +42,27 @@ class OnePlayerGameEngine:
             COLORS["white"],
         )
 
-        visibility_response: VisibilityResponsePacket = (
-            self.from_visualizer_queue.get()
-        )  # TODO: this is blocking, find alternative
+        visibility_response: VisibilityResponsePacket = self.from_visualizer_queue.get()
+        # TODO: this is blocking, find alternative
+
         print_colored(
-            f"GAME ENGINE - Received Visibility Request{visibility_response}",
+            f"GAME ENGINE - Received Visibility Response: {visibility_response}",
             COLORS["white"],
         )
-        return visibility_response["is_opponent_visible"]
+
+        return (
+            visibility_response["is_opponent_visible"],
+            visibility_response["snow_bomb_count"],
+        )
 
     def calculate_predicted_game_state(
-        self, action: str, player_id: int, can_see: bool
+        self, action: str, player_id: int, can_see: bool, snow_bomb_count: int
     ) -> GameStatePrediction:
         self.game_state_engine.perform_action(
-            action=action, player_id=player_id, can_see=can_see
+            action=action,
+            player_id=player_id,
+            can_see=can_see,
+            snow_bomb_count=snow_bomb_count,
         )
         predicted_game_state: GameStatePrediction = {
             "player_id": player_id,

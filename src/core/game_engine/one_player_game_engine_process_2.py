@@ -51,11 +51,14 @@ def one_player_game_engine_process(
             old_game_state = game_engine.get_game_state()
 
             # Check Visibility
-            can_see = game_engine.check_visibility(player_id=player_id)
+            can_see, snow_bomb_count = game_engine.check_visibility(player_id=player_id)
 
             # Calculate Game State prediction
             predicted_game_state = game_engine.calculate_predicted_game_state(
-                action="gun", player_id=player_id, can_see=can_see
+                action="gun",
+                player_id=player_id,
+                can_see=can_see,
+                snow_bomb_count=snow_bomb_count,
             )
 
             # Verify prediction with Eval Server
@@ -93,11 +96,14 @@ def one_player_game_engine_process(
             old_game_state = game_engine.get_game_state()
 
             # Check Visibility
-            can_see = game_engine.check_visibility(player_id=player_id)
+            can_see, snow_bomb_count = game_engine.check_visibility(player_id=player_id)
 
             # Calculate Game State prediction
             predicted_game_state = game_engine.calculate_predicted_game_state(
-                action=action, player_id=player_id, can_see=can_see
+                action=action,
+                player_id=player_id,
+                can_see=can_see,
+                snow_bomb_count=snow_bomb_count,
             )
 
             # Verify prediction with Eval Server
