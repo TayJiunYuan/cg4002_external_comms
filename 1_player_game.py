@@ -7,7 +7,9 @@ from src.core.relay_server_sender.relay_server_sender_process import (
 from src.core.ai_service.dummy_ai_service_process import dummy_ai_service_process
 from src.core.eval_client.evaluation_client_process import evaluation_client_process
 from src.core.mqtt_client.mqtt_client_process import mqtt_client_process
-from src.core.game_engine.one_player_game_engine_process import one_player_game_engine_process
+from src.core.game_engine.one_player_game_engine_process import (
+    one_player_game_engine_process,
+)
 from multiprocessing import Queue, Process
 
 if __name__ == "__main__":
@@ -15,11 +17,9 @@ if __name__ == "__main__":
 
         eval_server_port = int(input("Enter evaluation server port:\n"))
 
-        from_relay_queue_p1 = Queue()
+        to_game_engine_queue = Queue()
         to_relay_queue_p1 = Queue()
-        from_relay_queue_p2 = Queue()
         to_relay_queue_p2 = Queue()
-        from_ai_queue = Queue()
         to_ai_queue = Queue()
         from_eval_queue = Queue()
         to_eval_queue = Queue()
@@ -32,7 +32,7 @@ if __name__ == "__main__":
                 "127.0.0.1",
                 8002,
                 1,
-                from_relay_queue_p1,
+                to_game_engine_queue,
             ),
             daemon=True,
         )
@@ -54,7 +54,7 @@ if __name__ == "__main__":
                 "127.0.0.1",
                 8004,
                 2,
-                from_relay_queue_p2,
+                to_game_engine_queue,
             ),
             daemon=True,
         )
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
         ai_process = Process(
             target=dummy_ai_service_process,
-            args=(to_ai_queue, from_ai_queue),
+            args=(to_ai_queue, to_game_engine_queue),
             daemon=True,
         )
 
@@ -101,11 +101,9 @@ if __name__ == "__main__":
         game_engine_processs = Process(
             target=one_player_game_engine_process,
             args=(
-                from_relay_queue_p1,
+                to_game_engine_queue,
                 to_relay_queue_p1,
-                from_relay_queue_p2,
                 to_relay_queue_p2,
-                from_ai_queue,
                 to_ai_queue,
                 from_eval_queue,
                 to_eval_queue,
