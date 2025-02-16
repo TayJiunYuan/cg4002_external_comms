@@ -1,16 +1,24 @@
-from src.core.relay_server_receiver.relay_server_receiver_process import (
-    relay_server_receiver_process,
-)
-from src.core.relay_server_sender.relay_server_sender_process import (
-    relay_server_sender_process,
-)
-from src.core.ai_service.dummy_ai_service_process import dummy_ai_service_process
-from src.core.eval_client.evaluation_client_process import evaluation_client_process
+import os
+from multiprocessing import Process, Queue
+
+from dotenv import load_dotenv
+
+from src.core.ai_service.dummy_ai_service_process import \
+    dummy_ai_service_process
+from src.core.eval_client.evaluation_client_process import \
+    evaluation_client_process
+from src.core.game_engine.one_player_game_engine_process import \
+    one_player_game_engine_process
 from src.core.mqtt_client.mqtt_client_process import mqtt_client_process
-from src.core.game_engine.one_player_game_engine_process import (
-    one_player_game_engine_process,
-)
-from multiprocessing import Queue, Process
+from src.core.relay_server_receiver.relay_server_receiver_process import \
+    relay_server_receiver_process
+from src.core.relay_server_sender.relay_server_sender_process import \
+    relay_server_sender_process
+
+load_dotenv()
+
+username = os.getenv("MQTT_USERNAME")
+password = os.getenv("MQTT_PASSWORD")
 
 if __name__ == "__main__":
     try:
@@ -90,8 +98,10 @@ if __name__ == "__main__":
         mqtt_client_processs = Process(
             target=mqtt_client_process,
             args=(
-                "127.0.0.1",
-                1883,
+                "9751cef7cdab4b7789aa3266429daf60.s1.eu.hivemq.cloud",
+                8883,
+                username,
+                password,
                 to_visualizer_queue,
                 from_visualizer_queue,
             ),

@@ -4,10 +4,19 @@ from src.models.visualizer_packet import VisibilityRequestPacket, VisualizerActi
 
 
 def mqtt_client_process(
-    broker: str, port: int, to_visualizer_queue: Queue, from_visualizer_queue: Queue
+    broker: str,
+    port: int,
+    username: str,
+    password: str,
+    to_visualizer_queue: Queue,
+    from_visualizer_queue: Queue,
 ):
     client = MQTTClient(
-        broker=broker, port=port, from_visualizer_queue=from_visualizer_queue
+        broker=broker,
+        port=port,
+        username=username,
+        password=password,
+        from_visualizer_queue=from_visualizer_queue,
     )
     while True:
         operation: VisualizerActionPacket | VisibilityRequestPacket = (

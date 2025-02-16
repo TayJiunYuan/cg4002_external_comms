@@ -1,3 +1,4 @@
+import os
 import paho.mqtt.client as mqtt
 import json
 from typing import Dict
@@ -12,14 +13,24 @@ from src.utils.print_color import print_colored, COLORS
 VISIBILITY_RESPONSE_TOPIC = "/visibility/response"
 VISIBILITY_REQUEST_TOPIC = "/visibility/request"
 ACTION_TOPIC = "/action"
+CA_CERT_PATH = f"{os.getcwd()}/ssl/isrgrootx1.pem"
 
 
 class MQTTClient:
     """A simple MQTT client for handling game-related messages."""
 
-    def __init__(self, broker: str, port: int, from_visualizer_queue: Queue):
+    def __init__(
+        self,
+        broker: str,
+        port: int,
+        username: str,
+        password: str,
+        from_visualizer_queue: Queue,
+    ):
         self.client = mqtt.Client()
         self.from_visualizer_queue = from_visualizer_queue
+        self.client.username_pw_set(username, password)
+        self.client.tls_set(CA_CERT_PATH)
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
         self._connect(broker=broker, port=port)
