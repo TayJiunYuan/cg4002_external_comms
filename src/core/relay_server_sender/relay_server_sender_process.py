@@ -9,6 +9,3 @@ def relay_server_sender_process(
         host=host, port=port, player_id=player_id, to_relay_queue=to_relay_queue
     )
     server.start()
-    while True:
-        hp_and_bullets = to_relay_queue.get()
-        server.send_hp_and_bullets(hp_and_bullets)
