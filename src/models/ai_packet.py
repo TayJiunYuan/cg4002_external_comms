@@ -1,4 +1,4 @@
 class AIPacket:
     player_id: str
-    type: str
+    type: str   # "ai"
     action: str
