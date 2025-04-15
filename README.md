@@ -1,3 +1,12 @@
+# AR/ VR Game Capstone Project
+This is a two-player action game designed for AR/VR, built using a Unity-based application and enhanced with several Arduino-powered hardware peripherals and sensors.
+
+![VR Game](./assets/vr_fencing.png)
+![Hardware](./assets/hardware.jpg)
+
+Players use a glove and wand to perform actions, which are captured by sensors and processed by an AI model that classifies each action. The results are displayed in real time through the players’ VR goggles, creating an immersive and responsive experience.
+
+
 # External Comms
 
 This repoistory includes the external communication system for the capstone project, which runs primarily on a remote Ultra 96 server.
