@@ -3,6 +3,8 @@ import json
 from src.models.game_state import HPAndBulletsState
 from multiprocessing import Queue
 from src.utils.print_color import print_colored, COLORS
+from src.models.sensor_packet import DisconnectPacket
+import queue
 
 
 class RelayServerSender:
@@ -39,24 +41,35 @@ class RelayServerSender:
                 )
                 self.handle_client()
 
-            except (socket.error, KeyboardInterrupt) as e:
+            except KeyboardInterrupt:
+                print_colored(
+                    f"Relay Server (Sender) P{self.player_id} - Shutting down due to keyboard interrupt.",
+                    COLORS["yellow"],
+                )
+                break
+            except socket.error as e:
                 print_colored(
                     f"Relay Server (Sender) P{self.player_id} - Server error: {e}",
                     COLORS["yellow"],
                 )
-            finally:
-                self.socket.close()
-                print_colored(
-                    f"Relay Server (Sender) P{self.player_id} - Server shut down.",
-                    COLORS["yellow"],
-                )
+                break
+        self.socket.close()
+        print_colored(
+            f"Relay Server (Sender) P{self.player_id} - Server shut down.",
+            COLORS["green"],
+        )
 
-    # TODO: Need to implement some kind of client disconnect check so that we can break the loop and close the socket to allow the restarted client to reconnect
     def handle_client(self):
         try:
             while True:
-                hp_and_bullets = self.to_relay_queue.get()
-                self.send_hp_and_bullets(hp_and_bullets, self.client_socket)
+                packet: HPAndBulletsState | DisconnectPacket = self.to_relay_queue.get()
+                if "type" in packet:  # client has disconnected
+                    print_colored(
+                        f"Relay Server (Sender) P{self.player_id} - Client disconnected.",
+                        COLORS["yellow"],
+                    )
+                    raise ConnectionError
+                self.send_hp_and_bullets(packet, self.client_socket)
         except (socket.error, ConnectionError) as e:
             print_colored(
                 f"Relay Server (Sender) P{self.player_id} - Connection error: {e}",
@@ -68,15 +81,8 @@ class RelayServerSender:
     def send_hp_and_bullets(self, hp_and_bullets: HPAndBulletsState, client_socket):
         encoded_json = json.dumps(hp_and_bullets).encode("utf-8")
         message_length = f"{len(encoded_json)}_".encode("utf-8")
-        try:
-            if client_socket:
-                client_socket.sendall(message_length + encoded_json)
-                print_colored(
-                    f"Relay Server (Sender) P{self.player_id} - Sent: {hp_and_bullets}",
-                    COLORS["yellow"],
-                )
-        except socket.error as e:
-            print_colored(
-                f"Relay Server (Sender) P{self.player_id} - End error: {e}",
-                COLORS["yellow"],
-            )
+        client_socket.sendall(message_length + encoded_json)
+        print_colored(
+            f"Relay Server (Sender) P{self.player_id} - Sent: {hp_and_bullets}",
+            COLORS["yellow"],
+        )

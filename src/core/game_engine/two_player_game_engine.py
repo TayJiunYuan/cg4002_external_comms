@@ -13,7 +13,7 @@ from src.models.visualizer_packet import (
 from src.utils.print_color import print_colored, COLORS
 
 
-class OnePlayerGameEngine:
+class TwoPlayerGameEngine:
     def __init__(
         self,
         to_relay_queue_p1: Queue,
@@ -35,23 +35,24 @@ class OnePlayerGameEngine:
 
     def on_disconnect_packet_received(self, packet: DisconnectPacket) -> None:
         print_colored(
-            f"GAME ENGINE - Received Disconnect packet from P1: {packet}",
+            f"GAME ENGINE - Received Disconnect packet: {packet}",
             COLORS["white"],
         )
 
     def on_shoot_packet_received(self, packet: ShootPacket) -> int:
         print_colored(
-            f"GAME ENGINE - Received shoot packet from P1: {packet}",
+            f"GAME ENGINE - Received shoot packet: {packet}",
             COLORS["white"],
         )
         player_id = packet["player_id"]
         return player_id
 
     def on_imu_packet_received(self, packet: IMUPacket) -> None:
-        print_colored(
-            f"GAME ENGINE - Received IMU packet from P1: {packet}",
-            COLORS["white"],
-        )
+        # print_colored(
+        #     f"GAME ENGINE - Received IMU packet: {packet}",
+        #     COLORS["white"],
+        # )
+        return None
 
     def on_ai_packet_received(self, packet: AIPacket) -> Tuple[int, str]:
         print_colored(
@@ -154,6 +155,13 @@ class OnePlayerGameEngine:
     ) -> None:
         action_successful = False
         opponent_hp_hit = 0
+        # do not send to visualizer if no ammo to shoot bomb
+        if action == "bomb" and old_game_state[f"p{player_id}"]["bombs"] == 0:
+            print_colored(
+                "GAME ENGINE - No update to Visualizer as bomb no ammo",
+                COLORS["white"],
+            )
+            return None
         if action in ["shield, reload, logout"]:  # non-damaging action
             action_successful = True
             opponent_hp_hit = 0

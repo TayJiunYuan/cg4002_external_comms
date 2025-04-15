@@ -1,13 +1,13 @@
 import queue
 from multiprocessing import Queue
 
-from src.core.game_engine.one_player_game_engine import OnePlayerGameEngine
+from src.core.game_engine.two_player_game_engine import TwoPlayerGameEngine
 from src.models.sensor_packet import IMUPacket, ShootPacket, DisconnectPacket
 from src.models.ai_packet import AIPacket
 from src.utils.print_color import print_colored, COLORS
 
 
-def one_player_game_engine_process(
+def two_player_game_engine_process(
     to_game_engine_queue: Queue,
     to_relay_queue_p1: Queue,
     to_relay_queue_p2: Queue,
@@ -17,7 +17,7 @@ def one_player_game_engine_process(
     from_visualizer_queue: Queue,
     to_visualizer_queue: Queue,
 ):
-    game_engine = OnePlayerGameEngine(
+    game_engine = TwoPlayerGameEngine(
         to_relay_queue_p1,
         to_relay_queue_p2,
         to_ai_queue,

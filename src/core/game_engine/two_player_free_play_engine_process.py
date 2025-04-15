@@ -1,13 +1,13 @@
 import queue
 from multiprocessing import Queue
 
-from src.core.game_engine.one_player_game_engine import OnePlayerGameEngine
+from src.core.game_engine.two_player_free_play_engine import TwoPlayerGameEngine
 from src.models.sensor_packet import IMUPacket, ShootPacket, DisconnectPacket
 from src.models.ai_packet import AIPacket
 from src.utils.print_color import print_colored, COLORS
 
 
-def one_player_game_engine_process(
+def two_player_game_engine_process(
     to_game_engine_queue: Queue,
     to_relay_queue_p1: Queue,
     to_relay_queue_p2: Queue,
@@ -17,7 +17,7 @@ def one_player_game_engine_process(
     from_visualizer_queue: Queue,
     to_visualizer_queue: Queue,
 ):
-    game_engine = OnePlayerGameEngine(
+    game_engine = TwoPlayerGameEngine(
         to_relay_queue_p1,
         to_relay_queue_p2,
         to_ai_queue,
@@ -69,21 +69,9 @@ def one_player_game_engine_process(
                 snow_bomb_count=snow_bomb_count,
             )
 
-            # Verify prediction with Eval Server
-            try:
-                correct_game_state = game_engine.verify_game_state_with_eval(
-                    predicted_game_state=predicted_game_state
-                )
-            except queue.Empty:
-                print_colored(
-                    "GAME ENGINE - Eval Server Timeout",
-                    COLORS["white"],
-                )
-                continue
-
             # Update Game State
             new_game_state = game_engine.update_game_state(
-                correct_game_state=correct_game_state
+                correct_game_state=predicted_game_state
             )
 
             # Send new game state to visualizer
@@ -96,7 +84,7 @@ def one_player_game_engine_process(
             )
 
             # Send hp and bullets to relays
-            game_engine.send_updates_to_relays(correct_game_state=correct_game_state)
+            game_engine.send_updates_to_relays(correct_game_state=predicted_game_state)
 
         # AI packet
         else:
@@ -125,21 +113,9 @@ def one_player_game_engine_process(
                 snow_bomb_count=snow_bomb_count,
             )
 
-            # Verify prediction with Eval Server
-            try:
-                correct_game_state = game_engine.verify_game_state_with_eval(
-                    predicted_game_state=predicted_game_state
-                )
-            except queue.Empty:
-                print_colored(
-                    "GAME ENGINE - Eval Server Timeout",
-                    COLORS["white"],
-                )
-                continue
-
             # Update Game State
             new_game_state = game_engine.update_game_state(
-                correct_game_state=correct_game_state
+                correct_game_state=predicted_game_state
             )
 
             # Send new game state to visualizer
@@ -152,4 +128,4 @@ def one_player_game_engine_process(
             )
 
             # Send hp and bullets to relays
-            game_engine.send_updates_to_relays(correct_game_state=correct_game_state)
+            game_engine.send_updates_to_relays(correct_game_state=predicted_game_state)

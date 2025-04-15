@@ -37,9 +37,10 @@ class EvaluationClient:
         """Encrypts and sends game state prediction."""
         self._send_message(json.dumps(game_state_prediction))
 
-    def _receive_message(self):
+    def _receive_message(self, timeout=8):
         """Receives and decrypts a message from the evaluation server."""
         try:
+            self.socket.settimeout(timeout)  # Set timeout
             # Read message length
             length_data = b""
             while not length_data.endswith(b"_"):
@@ -58,13 +59,24 @@ class EvaluationClient:
                 data += chunk
             return data.decode("utf-8")
 
+        except socket.timeout as e:
+            print_colored(
+                "Eval Client - Receive error: Timeout while receiving message.",
+                COLORS["cyan"],
+            )
+            return None
         except (ValueError, socket.error, ConnectionError) as e:
             print_colored(f"Eval Client - Receive error: {e}", COLORS["cyan"])
             return None
+        finally:
+            self.socket.settimeout(None)
 
     def receive_correct_game_state(self) -> GameState:
         """Receives and decrypts a correct game state from the evaluation server."""
-        correct_game_state = json.loads(self._receive_message())
+        received_message = self._receive_message()
+        if received_message == None:  # error from receive_message
+            return None
+        correct_game_state = json.loads(received_message)
         print_colored(
             f"Eval Client - Received gamestate from eval server: {correct_game_state}",
             COLORS["cyan"],

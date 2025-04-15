@@ -4,18 +4,27 @@ from typing import Optional, Dict, Literal
 class imuData:
     """Represents IMU data structure."""
 
-    position: Literal["glove", "vest"]
-    accelerometer: Dict[str, int]  # {'x': int, 'y': int, 'z': int}
-    gyroscope: Dict[str, int]  # {'yaw': int, 'pitch': int, 'roll'}
+    aX_g: int
+    aY_g: int
+    aZ_g: int
+    gX_g: int
+    gY_g: int
+    gZ_g: int
+    aX_v: int
+    aY_v: int
+    aZ_v: int
+    gX_v: int
+    gY_v: int
+    gZ_v: int
+    timestamp: int
 
 
 class SensorPacket:
     """Base class for sensor packet."""
 
-    type: Literal["imu", "shoot"]
+    type: Literal["imu", "shoot", "dc"]
     player_id: int
     data: Optional[Dict] = None
-    timestamp: str
 
 
 class IMUPacket(SensorPacket):
@@ -30,3 +39,10 @@ class ShootPacket(SensorPacket):
 
     type: Literal["shoot"]
     data: None
+
+
+class DisconnectPacket(SensorPacket):
+    """Client disconnect Packet"""
+
+    type: Literal["dc"]
+    data = None

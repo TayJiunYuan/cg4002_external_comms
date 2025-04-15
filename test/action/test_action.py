@@ -1,38 +1,45 @@
 """
 Test each possible action (including AI action) through relay_client
 Command: 'python3 -m test.action.test_action'.
-Run after starting 1 player game 
+Run after starting 1 player game
 """
 
-from src.core.relay_client_sender.relay_client_sender_process import (
-    relay_client_sender_process,
+from src.core.relay_client_sender.relay_client_sender_thread import (
+    relay_client_sender_thread,
 )
-from src.core.relay_client_receiver.relay_client_receiver_process import (
-    relay_client_receiver_process,
+from src.core.relay_client_receiver.relay_client_receiver_thread import (
+    relay_client_receiver_thread,
 )
-from multiprocessing import Queue, Process
+from queue import Queue
+import threading
 from datetime import datetime
+
+stop_event = threading.Event()
+
 
 dummy_imu_packet = {
     "type": "imu",
     "player_id": 1,
     "data": {
-        "position": "glove",
-        "accelerometer": {"x": 10, "y": 10, "z": 10},
-        "gyroscope": {"yaw": 10, "pitch": 10, "roll": 10},
+        "aX_g": 10,
+        "aY_g": 10,
+        "aZ_g": 10,
+        "gX_g": 10,
+        "gY_g": 10,
+        "gZ_g": 10,
+        "aX_v": 10,
+        "aY_v": 10,
+        "aZ_v": 10,
+        "gX_v": 10,
+        "gY_v": 10,
+        "gZ_v": 10,
     },
     "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.")
     + f"{datetime.utcnow().microsecond:06d}"
     + "Z",
 }
 
-dummy_shoot_packet = {
-    "type": "shoot",
-    "player_id": 1,
-    "timestamp": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.")
-    + f"{datetime.utcnow().microsecond:06d}"
-    + "Z",
-}
+dummy_shoot_packet = {"type": "shoot", "player_id": 1, "timestamp": None, "data": None}
 
 dummy_shield_packet = {"type": "ai", "player_id": 1, "action": "shield"}
 
@@ -53,34 +60,42 @@ dummy_logout_packet = {"type": "ai", "player_id": 1, "action": "logout"}
 
 if __name__ == "__main__":
     relay_server_receiver_host_p1 = str(
-        input("TEST - IP Address for Server Receiver: ")
+        input("TEST - IP Address for Server Receiver: ") or "127.0.0.1"
     )
-    relay_server_receiver_port_p1 = int(input("TEST - Port for Server Receiver: "))
+    relay_server_receiver_port_p1 = int(
+        input("TEST - Port for Server Receiver: ") or 8002
+    )
 
-    relay_server_sender_host_p1 = str(input("TEST - IP Address for Server Receiver: "))
-    relay_server_sender_port_p1 = int(input("TEST - Port for Server Receiver: "))
+    relay_server_sender_host_p1 = str(
+        input("TEST - IP Address for Server Receiver: ") or "127.0.0.1"
+    )
+    relay_server_sender_port_p1 = int(
+        input("TEST - Port for Server Receiver: ") or 8003
+    )
 
     from_u96_queue = Queue()
     to_u96_queue = Queue()
 
-    relay_client_sender_process_p1 = Process(
-        target=relay_client_sender_process,
+    relay_client_sender_process_p1 = threading.Thread(
+        target=relay_client_sender_thread,
         args=(
             relay_server_receiver_host_p1,
             relay_server_receiver_port_p1,
             1,
             to_u96_queue,
+            stop_event,
         ),
         daemon=True,
     )
 
-    relay_client_receiver_process_p1 = Process(
-        target=relay_client_receiver_process,
+    relay_client_receiver_process_p1 = threading.Thread(
+        target=relay_client_receiver_thread,
         args=(
             relay_server_sender_host_p1,
             relay_server_sender_port_p1,
             1,
             from_u96_queue,
+            stop_event,
         ),
         daemon=True,
     )
@@ -91,7 +106,7 @@ if __name__ == "__main__":
     while True:
         print()
         user_input = input(
-            'TEST - Enter i - IMU, s - shoot, sh - shield, bo - bomb, re - reload, ba - badminton, go - golf, fe - fencing, box - boxing, lo - logout: \n'
+            "TEST - Enter i - IMU, s - shoot, sh - shield, bo - bomb, re - reload, ba - badminton, go - golf, fe - fencing, box - boxing, lo - logout: \n"
         )
         if user_input == "i":
             to_u96_queue.put(dummy_imu_packet)

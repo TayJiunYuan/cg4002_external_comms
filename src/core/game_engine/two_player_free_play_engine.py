@@ -13,7 +13,7 @@ from src.models.visualizer_packet import (
 from src.utils.print_color import print_colored, COLORS
 
 
-class OnePlayerGameEngine:
+class TwoPlayerGameEngine:
     def __init__(
         self,
         to_relay_queue_p1: Queue,
@@ -35,23 +35,24 @@ class OnePlayerGameEngine:
 
     def on_disconnect_packet_received(self, packet: DisconnectPacket) -> None:
         print_colored(
-            f"GAME ENGINE - Received Disconnect packet from P1: {packet}",
+            f"GAME ENGINE - Received Disconnect packet: {packet}",
             COLORS["white"],
         )
 
     def on_shoot_packet_received(self, packet: ShootPacket) -> int:
         print_colored(
-            f"GAME ENGINE - Received shoot packet from P1: {packet}",
+            f"GAME ENGINE - Received shoot packet: {packet}",
             COLORS["white"],
         )
         player_id = packet["player_id"]
         return player_id
 
     def on_imu_packet_received(self, packet: IMUPacket) -> None:
-        print_colored(
-            f"GAME ENGINE - Received IMU packet from P1: {packet}",
-            COLORS["white"],
-        )
+        # print_colored(
+        #     f"GAME ENGINE - Received IMU packet: {packet}",
+        #     COLORS["white"],
+        # )
+        return None
 
     def on_ai_packet_received(self, packet: AIPacket) -> Tuple[int, str]:
         print_colored(
@@ -130,23 +131,27 @@ class OnePlayerGameEngine:
 
     def update_game_state(self, correct_game_state: GameState) -> GameState:
         self.game_state_engine.player_1.set_state(
-            hp=correct_game_state["p1"]["hp"],
-            bullets_remaining=correct_game_state["p1"]["bullets"],
-            bombs_remaining=correct_game_state["p1"]["bombs"],
-            shield_health=correct_game_state["p1"]["shield_hp"],
-            num_deaths=correct_game_state["p1"]["deaths"],
-            num_unused_shield=correct_game_state["p1"]["shields"],
+            hp=correct_game_state["game_state"]["p1"]["hp"],
+            bullets_remaining=correct_game_state["game_state"]["p1"]["bullets"],
+            bombs_remaining=correct_game_state["game_state"]["p1"]["bombs"],
+            shield_health=correct_game_state["game_state"]["p1"]["shield_hp"],
+            num_deaths=correct_game_state["game_state"]["p1"]["deaths"],
+            num_unused_shield=correct_game_state["game_state"]["p1"]["shields"],
         )
 
         self.game_state_engine.player_2.set_state(
-            hp=correct_game_state["p2"]["hp"],
-            bullets_remaining=correct_game_state["p2"]["bullets"],
-            bombs_remaining=correct_game_state["p2"]["bombs"],
-            shield_health=correct_game_state["p2"]["shield_hp"],
-            num_deaths=correct_game_state["p2"]["deaths"],
-            num_unused_shield=correct_game_state["p2"]["shields"],
+            hp=correct_game_state["game_state"]["p2"]["hp"],
+            bullets_remaining=correct_game_state["game_state"]["p2"]["bullets"],
+            bombs_remaining=correct_game_state["game_state"]["p2"]["bombs"],
+            shield_health=correct_game_state["game_state"]["p2"]["shield_hp"],
+            num_deaths=correct_game_state["game_state"]["p2"]["deaths"],
+            num_unused_shield=correct_game_state["game_state"]["p2"]["shields"],
         )
         game_state = self.get_game_state()
+        print_colored(
+            f"GAME STATE {game_state}",
+            COLORS["white"],
+        )
         return game_state
 
     def send_updates_to_visualizer(
@@ -154,15 +159,26 @@ class OnePlayerGameEngine:
     ) -> None:
         action_successful = False
         opponent_hp_hit = 0
-        if action in ["shield, reload, logout"]:  # non-damaging action
+        # do not send to visualizer if no ammo to shoot bomb
+        if action == "bomb" and old_game_state[f"p{player_id}"]["bombs"] == 0:
+            print_colored(
+                "GAME ENGINE - No update to Visualizer as bomb no ammo",
+                COLORS["white"],
+            )
+            return None
+        if action in ["shield", "reload", "logout"]:  # non-damaging action
             action_successful = True
             opponent_hp_hit = 0
         else:  # damaging action (gun, bomb, badminton, golf, fencing, boxing)
             action_successful = can_see
             opponent_id = 2 if player_id == 1 else 1
+
             opponent_hp_hit = (
                 old_game_state[f"p{opponent_id}"]["hp"]
-                - new_game_state[f"p{opponent_id}"]["hp"]
+                + old_game_state[f"p{opponent_id}"]["shield_hp"]
+            ) - (
+                new_game_state[f"p{opponent_id}"]["hp"]
+                + new_game_state[f"p{opponent_id}"]["shield_hp"]
             )
         visualizer_action_packet: VisualizerActionPacket = {
             "action": action,
@@ -179,8 +195,8 @@ class OnePlayerGameEngine:
     def send_updates_to_relays(self, correct_game_state: GameState) -> None:
         hp_and_bullets_p1: HPAndBulletsState = {
             "player_id": 1,
-            "hp": correct_game_state["p1"]["hp"],
-            "bullets": correct_game_state["p1"]["bullets"],
+            "hp": correct_game_state["game_state"]["p1"]["hp"],
+            "bullets": correct_game_state["game_state"]["p1"]["bullets"],
         }
         self.to_relay_queue_p1.put(hp_and_bullets_p1)
         print_colored(
@@ -190,8 +206,8 @@ class OnePlayerGameEngine:
 
         hp_and_bullets_p2: HPAndBulletsState = {
             "player_id": 2,
-            "hp": correct_game_state["p2"]["hp"],
-            "bullets": correct_game_state["p2"]["bullets"],
+            "hp": correct_game_state["game_state"]["p2"]["hp"],
+            "bullets": correct_game_state["game_state"]["p2"]["bullets"],
         }
         self.to_relay_queue_p2.put(hp_and_bullets_p2)
         print_colored(

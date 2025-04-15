@@ -3,17 +3,18 @@ from multiprocessing import Process, Queue
 
 from dotenv import load_dotenv
 
-from src.core.ai_service.ai_service_process import \
-    ai_service_process
-from src.core.eval_client.evaluation_client_process import \
-    evaluation_client_process
-from src.core.game_engine.one_player_game_engine_process import \
-    one_player_game_engine_process
+from src.core.ai_service.dummy_ai_service_process import dummy_ai_service_process
+from src.core.eval_client.evaluation_client_process import evaluation_client_process
+from src.core.game_engine.two_player_game_engine_process import (
+    two_player_game_engine_process,
+)
 from src.core.mqtt_client.mqtt_client_process import mqtt_client_process
-from src.core.relay_server_receiver.relay_server_receiver_process import \
-    relay_server_receiver_process
-from src.core.relay_server_sender.relay_server_sender_process import \
-    relay_server_sender_process
+from src.core.relay_server_receiver.relay_server_receiver_process import (
+    relay_server_receiver_process,
+)
+from src.core.relay_server_sender.relay_server_sender_process import (
+    relay_server_sender_process,
+)
 
 load_dotenv()
 
@@ -36,12 +37,7 @@ if __name__ == "__main__":
 
         relay_server_receiver_process_p1 = Process(
             target=relay_server_receiver_process,
-            args=(
-                "127.0.0.1",
-                8002,
-                1,
-                to_game_engine_queue,
-            ),
+            args=("127.0.0.1", 8002, 1, to_game_engine_queue, to_ai_queue),
             daemon=True,
         )
 
@@ -58,12 +54,7 @@ if __name__ == "__main__":
 
         relay_server_receiver_process_p2 = Process(
             target=relay_server_receiver_process,
-            args=(
-                "127.0.0.1",
-                8004,
-                2,
-                to_game_engine_queue,
-            ),
+            args=("127.0.0.1", 8004, 2, to_game_engine_queue, to_ai_queue),
             daemon=True,
         )
 
@@ -79,7 +70,7 @@ if __name__ == "__main__":
         )
 
         ai_process = Process(
-            target=ai_service_process,
+            target=dummy_ai_service_process,
             args=(to_ai_queue, to_game_engine_queue),
             daemon=True,
         )
@@ -109,7 +100,7 @@ if __name__ == "__main__":
         )
 
         game_engine_processs = Process(
-            target=one_player_game_engine_process,
+            target=two_player_game_engine_process,
             args=(
                 to_game_engine_queue,
                 to_relay_queue_p1,
